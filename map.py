@@ -1,9 +1,9 @@
-import tkinter 
-from Pillow import Image
+import Tkinter 
+from PIL import Image
 import urllib
-import urllib.request
-from io import StringIO 
 
+from io import StringIO 
+from io import BytesIO
 
 
 def get_static_google_map(filename_wo_extension, center=None, zoom=None, imgsize="500x500", imgformat="jpeg",
@@ -45,8 +45,15 @@ def get_static_google_map(filename_wo_extension, center=None, zoom=None, imgsize
     request += "sensor=false&"   # must be given, deals with getting loction from mobile device 
     print(request)
     
-    urllib.request.urlretrieve(request, filename_wo_extension+"."+imgformat) # Option 1: save image directly to disk
-    
+    web_sock = urllib.urlopen(request)
+    imgdata = BytesIO(web_sock.read())
+    try:
+        PIL_img = Image.open(imgdata)
+    except IOError:
+        print "IOError:", imgdata.read()
+    else:
+        PIL_img.show()
+
     
 if __name__ == '__main__':
 
